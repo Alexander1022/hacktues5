@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link href="./jquery/jquery-ui.css" rel="stylesheet">
+<script src="./jquery/external/jquery/jquery.js"></script>
+<script src="./jquery/jquery-ui.js"></script>
+<style>
+body {
+  margin: 0;
+  padding: 0;
+  background-color: darkgrey;
+  font-family: Ariel, Charcoal, sans-serif;
+}
+
+#container {
+  width: 500px;
+  height: 525px;
+  background-color: #f8f7f5;
+  margin: 50px auto;
+}
+
+header {
+  background: rgba(18, 136, 255, 1);
+  background: -moz-linear-gradient(top, rgba(18, 136, 255, 1) 0%, rgba(8, 182, 245, 1) 100%);
+  background: -webkit-gradient(left top, left bottom, color-stop(0%, rgba(18, 136, 255, 1)), color-stop(100%, rgba(8, 182, 245, 1)));
+  background: -webkit-linear-gradient(top, rgba(18, 136, 255, 1) 0%, rgba(8, 182, 245, 1) 100%);
+  background: -o-linear-gradient(top, rgba(18, 136, 255, 1) 0%, rgba(8, 182, 245, 1) 100%);
+  background: -ms-linear-gradient(top, rgba(18, 136, 255, 1) 0%, rgba(8, 182, 245, 1) 100%);
+  background: linear-gradient(to bottom, rgba(18, 136, 255, 1) 0%, rgba(8, 182, 245, 1) 100%);
+  filter: progid: DXImageTransform.Microsoft.gradient( startColorstr='#b7deed', endColorstr='#08b6f5', GradientType=0);
+  margin: 0;
+  height: 60px;
+  line-height: 60px;
+  color: white;
+  text-align: center;
+}
+
+nav {
+  background-color: white;
+}
+
+nav ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  background-color: white;
+  overflow: hidden;
+}
+
+nav li {
+  float: left;
+  width: 33.1%;
+  border-right: 1px solid;
+}
+
+nav li:last-child {
+  border: none;
+}
+
+nav li a {
+  display: block;
+  text-align: center;
+  padding: 14px 16px;
+  text-decoration: none;
+  color: black;
+}
+
+.active {
+  background-color: #f8f7f5;
+}
+
+h1 {
+  margin: 0;
+}
+
+.list {
+  height: 250px;
+  overflow: hidden;
+  list-style: none;
+  display: none;
+}
+
+.input {
+  padding-left: 30px;
+}
+
+.listActive {
+  display: block;
+}
+
+input[type=checkbox] {}
+
+
+
+
+input[type=checkbox] + label:before {
+    content: "";  
+    display: inline-block;  
+    width: 15px;  
+    height: 15px;  
+    vertical-align:middle;
+    margin-right: 8px;  
+    background-color: #aaa;  
+    box-shadow: inset 0px 2px 2px rgba(0, 0, 0, .3);
+    border-radius: 4px;  
+}
+input[type=checkbox]:checked + label:before {
+    content:"\2713";  Tick 
+    color:white;
+    background-color: #666; 
+    text-align:center;
+    line-height:15px;
+    text-shadow:0px 0px 3px #eee;
+}
+
+
+
+.menu {
+  border-top: 2px solid grey;
+  width: 500px;
+}
+
+.menu label,
+.menu input {
+  display: block;
+  width: 150px;
+  float: left;
+  margin: 10px 0px;
+}
+
+.menu label {
+  text-align: right;
+  padding-right: 20px;
+  font-size: 20px;
+}
+
+br {
+  clear: left;
+}
+
+.list {
+  padding: 0px;
+}
+
+.list li {
+  font-size: 1.25em;
+  margin-top: 10px;
+  padding: 0 0 10px 0;
+  border-bottom: 1px solid black;
+}
+
+#cbox {
+  margin-left: 30px;
+  margin-right: 40px;
+}
+</style>
+</head>
+<body>
+  <div id="container">
+    <header>
+      <h1>TO DO LIST</h1></header>
+    <nav>
+      <ul>
+        <li class="navButton" rel="yesterday"><a href="#">Yesterday</a></li>
+        <li class="navButton active" rel="today"><a href="#">Today</a></li>
+        <li class="navButton" rel="tomorrow"><a href="#">Tomorrow</a></li>
+      </ul>
+    </nav>
+    <div class="yesterday">
+      <ul class="list" id="yesterday">
+      </ul>
+    </div>
+    <div class="today">
+      <ul class="list listActive " id="today">
+      </ul>
+    </div>
+    <div class="tomorrow">
+      <ul class="list" id="tomorrow">
+      </ul>
+    </div>
+    <div class="menu">
+      <label> Add Task:</label>
+      <input type="text" id="item">
+      <br>
+      <label> Date complete:</label>
+      <input id="date"> 
+      <br>
+      <input type="button" value="Add" id="addButton">
+      <input type="button" value="remove" id="removeButton">
+    </div>
+
+  </div>
+<script>
+(function() {
+
+  /////////////////////DATES///////////////////////////////
+
+  var today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  var yesterday = new Date();
+  yesterday.setDate(yesterday.getDate() - 1);
+  yesterday.setHours(0, 0, 0, 0);
+
+  var tomorrow = new Date();
+  tomorrow.setDate(tomorrow.getDate() + 1);
+  tomorrow.setHours(0, 0, 0, 0);
+
+
+  var elems = document.querySelectorAll("nav li");
+
+  var listElems = document.querySelectorAll("div > ul");
+
+  var itemBox = document.getElementById("item");
+
+  var dateBox = document.getElementById("date");
+
+  var id;
+
+  var json = {
+
+  };
+
+  var retrivedObject = localStorage.getItem('json');
+
+  if (retrivedObject !== null && Object.keys(retrivedObject).length >= 1) {
+    json = JSON.parse(retrivedObject);
+    console.log(json);
+  }
+
+
+  var num = 0;
+
+  var addButton = document.getElementById("addButton");
+  addButton.addEventListener("click", objectTask);
+
+  var removeButton = document.getElementById('removeButton');
+  removeButton.addEventListener("click", removeList);
+
+  $('#date').datepicker({
+    dateFormat: "dd/mm/yy"
+  });
+
+  function onLoad() {
+
+    if (json !== null || Object.keys(json).length !== 0) {
+
+      var loadDate;
+      var loadTodo;
+      var jsonLength = Object.keys(json).length;
+
+      for (var key in json) {
+        loadDate = json[key].date;
+        loadTodo = json[key].todo;
+
+        selectId(loadDate);
+
+        makeList(id, loadTodo, key);
+      }
+
+      num = Number(Object.keys(json)[jsonLength-1]) + 1;
+      console.log(num);
+    }
+    return;
+  }
+
+  onLoad();
+
+  function objectTask() {
+
+    var itemTask = itemBox.value;
+
+    var date = dateBox.value;
+    var dateSplit = dateBox.value.split('/'),
+      dateTask = new Date(dateSplit[2], dateSplit[1] - 1, dateSplit[0], 0, 0, 0, 0);
+
+
+    if (validate(itemTask, date) === false) {
+      return
+    }
+
+    dateTask = dateTask.getTime();
+
+    addToDataB(itemTask, dateTask);
+
+    newDate = json[num].date;
+
+    selectId(newDate);
+
+    makeList(id, itemTask, num);
+
+    num++
+    clear();
+
+    localStorage.setItem('json', JSON.stringify(json));
+
+  }
+
+  function validate(itemTask, date) {
+
+    var ex = /^(\d{1,2})\/(\d{1,2})\/(\d{4})$/;
+
+    if (itemTask == "" || itemTask == null) {
+      alert("help");
+      return false;
+    }
+
+    if (date != '' && date.match(ex)) {
+      if (regs = date.match(ex)) {
+
+        if (regs[1] < 1 || regs[1] > 31) {
+          alert("invalid day");
+          return false;
+        }
+        if (regs[2] < 1 || regs[2] > 12) {
+          alert("Invalid value for month: " + regs[2]);
+          return false;
+        }
+        // year value between 1902 and 2016
+        if (regs[3] < 1902 || regs[3] > (new Date()).getFullYear()) {
+          alert("Invalid value for year: " + regs[3] + " - must be between 1902 and " + (new Date()).getFullYear());
+          return false;
+        } else if (!date.match(ex)) {
+          alert("date ssss");
+          return false;
+        }
+      }
+    } else {
+      alert("date help");
+      return false;
+    };
+
+  }
+
+  var makeActive = function() {
+    for (var i = 0; i < elems.length; i++) {
+      elems[i].classList.remove('active');
+    }
+    this.classList.add('active');
+  };
+
+  var getList = function() {
+    for (var i = 0; i < listElems.length; i++) {
+      listElems[i].classList.remove('listActive');
+    }
+    var rel = this.getAttribute('rel');
+    var ulNode = document.getElementById(rel);
+    ulNode.classList.add('listActive');
+  };
+
+
+  var addToDataB = function(list, date) {
+
+    var settings = {
+      "todo": list,
+      "date": date
+    };
+
+    json[num] = settings;
+
+  }
+
+
+  function selectId(date) {
+
+    if (today.getTime() === date) {
+      id = 'today';
+      return
+    } else if (yesterday.getTime() === date) {
+      id = 'yesterday';
+      return
+    } else if (tomorrow.getTime() === date) {
+      id = 'tomorrow';
+      return
+    } else {
+      id = '';
+      clear();
+      return
+    }
+  }
+
+
+
+  function makeList(id, itemTask, key) {
+
+
+    var itemText = document.createTextNode(itemTask);
+
+    var itemLabel = document.createElement('label')
+    itemLabel.setAttribute("for", "cbox");
+
+    var itemInput = document.createElement('input');
+    itemInput.type = "checkbox";
+    itemInput.id = "cbox";
+
+    var liText = document.createElement('li');
+    liText.className = key;
+    liText.appendChild(itemInput);
+    liText.appendChild(itemLabel);
+    liText.appendChild(itemText);
+
+    var ulText = document.getElementById(id);
+    ulText.appendChild(liText);
+
+  }
+
+  function removeList() {
+    var ul = document.querySelectorAll('.list');
+    // ul selected
+    var li;
+
+    var classId;
+
+    for (var key in json) {
+      loadDate = json[key].date;
+      loadTodo = json[key].todo;
+
+      selectId(loadDate);
+
+      makeList(id, loadTodo, num);
+    }
+
+    for (var k = 0; k < ul.length; k++) {
+      // all li selected in ul
+      li = ul[k].children;
+
+      for (var j = 0; j < li.length; j++) {
+        while (li[j] && li[j].children[0].checked) {
+          classId = li[j].className;
+          ul[k].removeChild(li[j]);
+          delete json[classId];
+          localStorage.setItem('json', JSON.stringify(json));
+
+        }
+      }
+    }
+  }
+
+  function clear() {
+    itemBox.value = '';
+    dateBox.value = '';
+
+  }
+
+  for (var i = 0; i < elems.length; i++) {
+    elems[i].addEventListener('click', function() {
+      makeActive.call(this);
+      getList.call(this);
+    });
+  }
+})();
+
+</script>
+  </body>
