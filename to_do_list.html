@@ -412,14 +412,6 @@ br {
 
     var classId;
 
-    for (var key in json) {
-      loadDate = json[key].date;
-      loadTodo = json[key].todo;
-
-      selectId(loadDate);
-
-      makeList(id, loadTodo, num);
-    }
 
     for (var k = 0; k < ul.length; k++) {
       // all li selected in ul
