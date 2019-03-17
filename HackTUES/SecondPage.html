@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+body {
+
+  background-color: #333;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.tab {
+  float: left;
+  border: 1px solid #333;
+  background-color: #4b4b4b;
+  width: 215px;
+  height: 585px;
+}
+
+.tab button {
+	text-align: center;
+  display: block;
+  background-color: #333;
+  color: black;
+  padding: 35px 11px;
+  width: 100%;
+  border: none;
+  outline: none;
+  text-align: left;
+  cursor: pointer;
+  transition: 0.3s;
+  font-size: 17px;
+}
+
+.tab button:hover {
+  background-color: #4b4b4b;
+}
+
+.tab button.active {
+  background-color: #4b4b4b;
+}
+
+.tabcontent {
+	background-color: #8b8b8b;
+  float: right;
+  padding: 0px 12px;
+  border: 1px solid #8b8b8b;
+  width: 1090px;
+  border-left: none;
+  height: 585px;
+}
+
+.topnav {
+  overflow: hidden;
+  background-color: #333;
+}
+
+.topnav a {
+  float: left;
+  color: #f2f2f2;
+  text-align: center;
+  padding: 14px 16px;
+  text-decoration: none;
+  font-size: 17px;
+}
+
+.topnav a:hover {
+  background-color: #ddd;
+  color: black;
+}
+
+.topnav a.active {
+  background-color: #333;
+  color: white;
+}
+</style>
+</head>
+<body>
+
+<div class="topnav">
+  <a class="active" href="MyMain.html"><img src="logo2.png" width="105" height="25"></a>
+</div>
+<div class="tab">
+  <button class="tablinks" onclick="openProg(event, 'Calendar')"><img src="cal.png" width="120" height="120" ></button>
+  <button class="tablinks" onclick="openProg(event, 'Reminder')"><a href="remins1.html"><img src="reminder.png" width="120" height="120"></button>
+  <button class="tablinks" onclick="openProg(event, 'ToDoList')"><a href="ToDoList.html"><img src="toDoList1.png" width="120" height="120"></a></button>
+</div>
+
+<div id="Calendar" class="tabcontent">
+  
+</div>
+
+<div id="Reminder" class="tabcontent">
+  
+</div>
+
+<div id="ToDoList" class="tabcontent">
+
+</div>
+
+<script>
+function openProg(evt, progName) {
+  var i, tabcontent, tablinks;
+  tabcontent = document.getElementsByClassName("tabcontent");
+  for (i = 0; i < tabcontent.length; i++) {
+    tabcontent[i].style.display = "none";
+  }
+  tablinks = document.getElementsByClassName("tablinks");
+  for (i = 0; i < tablinks.length; i++) {
+    tablinks[i].className = tablinks[i].className.replace(" active", "");
+  }
+  document.getElementById(cityName).style.display = "block";
+  evt.currentTarget.className += " active";
+}
+
+document.getElementById("defaultOpen").click();
+</script>
